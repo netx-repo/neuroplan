@@ -1,0 +1,29 @@
+# Python byte code
+*.pyc
+
+# Vim
+*.swp
+
+# Mac
+*.DS_Store
+
+# Configuration files
+.env
+.vscode
+.VSCodeCounter
+
+# results
+source/results/*
+
+# Gurobi solver related
+*.log
+*.so
+*.lp
+
+# data and model
+fb_data_anon*
+results
+
+# Others
+source/config.py
+sync.py
