@@ -1,6 +1,7 @@
 ## 0. Introduction
-
 This repository contains the source code for our SIGCOMM'21 paper "Network Planning with Deep Reinforcement Learning".
+### Notes
+The network topologies and the trained models used in the paper are not open-sourced. One can create synthetic topologies according to the problem formulation in the paper or modify the code for their own use case.
 
 ## 1. Environment config
 ### AWS instance configurations
@@ -52,7 +53,7 @@ cd <repo>/source/c_solver
     - adapted from [OpenAI Spinning Up](https://github.com/openai/spinningup)
 - `gurobi.sh`
     - used to install Gurobi solver
-## 3. Reproduce results
+## 3. Reproduce results (for SIGCOMM'21 artifact evaluation)
 ### Notes 
 - Some data points are time-consuming to get (i.e., First-stage for A-0, A-0.25, A-0.5, A-0.75 in Figure 8 and B, C, D, E in Figure 9). We provide pretrained models in `<repo>/source/results/trained/<topo_name>/`, which will be loaded by default. 
 - We recommend distributing different data points and differetnt experiments on multiple AWS instances to run simultaneously.

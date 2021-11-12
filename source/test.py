@@ -5,9 +5,6 @@ from rl.rl import RL
 from planning.ilp import ILP
 from topology.topology import Topology
 
-# import run_time kwargs, include max_action, steps_per_epoch, delta_bw, epoch_num
-from config import *
-
 def read_topo(topo_name, adjust_factor_in=None):
     assert(topo_name in ["A", "B", "C", "D", "E"])
     topo_name_map_file_path = {}
@@ -31,7 +28,6 @@ def read_topo(topo_name, adjust_factor_in=None):
 def fig_7(epoch_num=10):
     checker_mode_list = ["all", "sa", "vanilla"]
     topo_name_list = ["A", "B", "C", "D", "E"]
-    topo_name_map_run_kwargs = fig7_topo_name_map_run_kwargs
 
     result_log = collections.defaultdict(dict)
     for topo_name in topo_name_list:
@@ -39,11 +35,10 @@ def fig_7(epoch_num=10):
             checker_mode_list = ["all", "sa", "vanilla"]
         else:
             checker_mode_list = ["all", "sa"]
-        run_time_kwargs = topo_name_map_run_kwargs[topo_name]
-        run_time_kwargs[epoch_num] = epoch_num
+
         for checker_mode in checker_mode_list:
-            print(f'\n========== checker_mode:{checker_mode} topo_name:{topo_name} ==========\n', run_time_kwargs)
-            rl_solver = RL(topo=read_topo(topo_name), num_gnn_layer=2, max_n_delta_bw=1, checker_mode=checker_mode, **run_time_kwargs)
+            print(f'\n========== checker_mode:{checker_mode} topo_name:{topo_name} ==========\n')
+            rl_solver = RL(topo=read_topo(topo_name), num_gnn_layer=2, max_n_delta_bw=1, checker_mode=checker_mode)
             rl_solver.run_training()
 
             # read the last line of the log file and calculate the avg time per epoch
@@ -66,7 +61,6 @@ def fig_7(epoch_num=10):
 # support ILP, First-stage and Second-stage
 def single_dp_fig8(alg, adjust_factor_in=1, load_trained=True):
     print(f'\n========== Fig8 start, A-{adjust_factor_in}, alg:{alg} ==========\n')
-    adjust_factor_map_run_kwargs = fig8_adjust_factor_map_run_kwargs
                                 
     if alg == "ILP":
         ilp_solver = ILP(topo=read_topo("A", adjust_factor_in=adjust_factor_in))
@@ -85,15 +79,14 @@ def single_dp_fig8(alg, adjust_factor_in=1, load_trained=True):
                 model_path = None
         else:
             model_path = None
-        run_time_kwargs = adjust_factor_map_run_kwargs[adjust_factor_in]
-        print(f'\n========== Fig8, RL: Topo: A-{adjust_factor_in}, load pre-trained model: {model_path} ==========\n', run_time_kwargs)
-        rl_solver = RL(topo=read_topo("A", adjust_factor_in=adjust_factor_in), model_path=model_path, num_gnn_layer=2, max_n_delta_bw=1, **run_time_kwargs)
+        print(f'\n========== Fig8, RL: Topo: A-{adjust_factor_in}, load pre-trained model: {model_path} ==========\n')
+        rl_solver = RL(topo=read_topo("A", adjust_factor_in=adjust_factor_in), model_path=model_path, num_gnn_layer=2, max_n_delta_bw=1)
         rl_solver.run_training()
         print(f'========== first stage result: {rl_solver.env.opt_target} =========\n')
         subopt_sol = rl_solver.env.ip_idx_map_num_step
         print(f'\n========== ILP on second stage: adjust_factor_in:{adjust_factor_in} ==========\n')
         ilp_solver = ILP(topo=read_topo("A", adjust_factor_in=adjust_factor_in))
-        ilp_solver.run_ilp(subopt_sol=subopt_sol, relax_factor=1.5, delta_bw=run_time_kwargs['delta_bw'])
+        ilp_solver.run_ilp(subopt_sol=subopt_sol, relax_factor=1.5)
         print(f'========== second stage, adjust_factor_in: {adjust_factor_in}, result: {ilp_solver.cost_opt} =========\n')
     else:
         print("Illegal args")
@@ -102,7 +95,6 @@ def single_dp_fig8(alg, adjust_factor_in=1, load_trained=True):
 # support ILP, ILP-huer and First-stage
 def single_dp_fig9(topo_name, alg, adjust_factor_in=1.0, load_trained=True):
     print(f'\n========== start: topo_name:{topo_name} alg:{alg} adjust_factor_in:{adjust_factor_in}==========\n')
-    topo_name_map_run_kwargs = fig9_topo_name_map_run_kwargs
                                 
     if alg == "ILP":
         ilp_solver = ILP(topo=read_topo(topo_name, adjust_factor_in=adjust_factor_in))
@@ -119,9 +111,8 @@ def single_dp_fig9(topo_name, alg, adjust_factor_in=1.0, load_trained=True):
                 model_path = None
         else:
             model_path = None
-        run_time_kwargs = topo_name_map_run_kwargs[topo_name]
-        print(f'\n========== RL: topo_name:{topo_name}, load pre-trained model: {model_path} ==========\n', run_time_kwargs)
-        rl_solver = RL(topo=read_topo(topo_name), model_path=model_path, num_gnn_layer=2, max_n_delta_bw=1, **run_time_kwargs)
+        print(f'\n========== RL: topo_name:{topo_name}, load pre-trained model: {model_path} ==========\n')
+        rl_solver = RL(topo=read_topo(topo_name), model_path=model_path, num_gnn_layer=2, max_n_delta_bw=1)
         rl_solver.run_training()
         print(f'========== first stage result: {rl_solver.env.opt_target} =========\n')
     else:
@@ -129,7 +120,6 @@ def single_dp_fig9(topo_name, alg, adjust_factor_in=1.0, load_trained=True):
 
 # given the path of the sol form the first stage, run second stage
 def second_stage(topo_name, sol_path, rf=1.0):
-    topo_name_map_run_kwargs = snd_stage_topo_name_map_run_kwargs
 
     with open(sol_path) as json_file:
         json_dict = json.load(json_file)
@@ -137,19 +127,16 @@ def second_stage(topo_name, sol_path, rf=1.0):
     for k, v in json_dict.items():
         subopt_sol[int(k)] = v
     ilp_solver = ILP(topo=read_topo(topo_name))
-    ilp_solver.run_ilp(subopt_sol=subopt_sol, relax_factor=rf, delta_bw=topo_name_map_run_kwargs[topo_name]['delta_bw'])
+    ilp_solver.run_ilp(subopt_sol=subopt_sol, relax_factor=rf)
     print(f'========== sol from the first stage: {subopt_sol} ============\n')
     print(f'========== second stage, topo_name: {topo_name}, rf: {rf}, result: {ilp_solver.cost_opt} =========\n')
 
 # single data point, used for Figure 10, 11, 12
 def params_rl(adjust_factor_in=1.0, num_gnn_layer=2, max_n_delta_bw=1, hidden_sizes=(256, 256)):
     print(f'\n========== start: adjust_factor_in:{adjust_factor_in} num_gnn_layer:{num_gnn_layer}, max_n_delta_bw:{max_n_delta_bw}, hidden_sizes:{hidden_sizes} ==========\n')
-    adjust_factor_map_run_kwargs = params_adjust_factor_map_run_kwargs
-
-    run_time_kwargs = adjust_factor_map_run_kwargs[adjust_factor_in]
     
     rl_solver = RL(topo=read_topo("A", adjust_factor_in=adjust_factor_in), num_gnn_layer=num_gnn_layer, \
-        max_n_delta_bw=max_n_delta_bw,hidden_sizes=hidden_sizes, **run_time_kwargs)
+        max_n_delta_bw=max_n_delta_bw,hidden_sizes=hidden_sizes)
     rl_solver.run_training()
     print(f'\n========== end: adjust_factor_in:{adjust_factor_in} num_gnn_layer:{num_gnn_layer}, max_n_delta_bw:{max_n_delta_bw}, hidden_sizes:{hidden_sizes} ==========')
     print(f'result: {rl_solver.env.opt_target}')
