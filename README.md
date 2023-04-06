@@ -13,8 +13,9 @@ git clone https://github.com/iarmourgarb/neuroplan.git
 conda create --name <env> python=3.7
 conda activate <env>
 
-### Step 2: Install gurobi in conda env
+### Step 2: Install gurobi and mpi4py in conda env
 conda install -c gurobi gurobi
+conda install -c conda-forge mpi4py
 
 
 #I'm not sure about these steps
