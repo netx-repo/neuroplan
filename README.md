@@ -3,39 +3,33 @@ This repository contains the source code for our SIGCOMM'21 paper "Network Plann
 ### Notes
 The network topologies and the trained models used in the paper are not open-sourced. One can create synthetic topologies according to the problem formulation in the paper or modify the code for their own use case.
 
-## 1. Environment config
-### AWS instance configurations
-- AMI image: "Deep Learning AMI (Ubuntu 16.04) Version 43.0 - ami-0774e48892bd5f116"
-- for First-stage: g4dn.4xlarge; `Threads 16` in `gurobi.env`
-- for others (ILP, ILP-heur, Second-stage): m5zn.12xlarge; `Threads 8` in `gurobi.env`
+## 1. Environment config UPDATED TO WORK ON MAC
 
 ### Step 0: download the git repo
-### Step 1: install Linux dependencies
 ```
-sudo apt-get update
-sudo apt-get install build-essential libopenmpi-dev libboost-all-dev
+git clone https://github.com/iarmourgarb/neuroplan.git
 ```
-### Step 2: install Gurobi
-```
-cd <repo>/
-./gurobi.sh
-source ~/.bashrc
-```
+### Step 1: Make conda environment
+conda create --name <env> python=3.7
+conda activate <env>
+
+### Step 2: Install gurobi and mpi4py in conda env
+conda install -c gurobi gurobi
+conda install -c conda-forge mpi4py
+
+
+#I'm not sure about these steps
 - Install the license here: https://www.gurobi.com/downloads/free-academic-license/
 - Make sure your Gurobi solver work: `gurobi_cl /opt/gurobi902/linux64/examples/data/coins.lp`
-### Step 3: setup && start conda environment with python3.7.7
-If you use the AWS Deep Learning AMI, conda is preinstalled.
+
+
+### Step 3: install python dependencies in the conda env
 ```
-conda create --name <env> python=3.7.7
-conda activate <env>
-```
-### Step 4: install python dependencies in the conda env
-```
-cd <repo>/spinninup
+cd <repo>/spinningup
 pip install -e .
 pip install networkx pulp pybind11 xlrd==1.2.0
 ```
-### Step 5: compile C++ program with pybind11
+### Step 4: compile C++ program with pybind11
 ```
 cd <repo>/source/c_solver
 ./compile.sh
