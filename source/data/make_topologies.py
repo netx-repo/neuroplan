@@ -77,22 +77,22 @@ def process_graph(file_path):
         
 
 
-        # assert(idx + 1 == net_size * net_size)
+    #     assert(idx + 1 == net_size * net_size)
 
-        # for line in fd:
-        #     if (not line.startswith("Link_") and not line.startswith("edge_")):
-        #         continue
-        #     camps = line.split(" ")
-        #     name = str(camps[0])
-        #     src = int(camps[1])
-        #     dst = int(camps[2])
-        #     weight = int(camps[3])
-        #     bw = float(camps[4])
-        #     links_name[src][dst] = name
-        #     links_bw[src][dst] = bw
-        #     links_rtt[src][dst] = weight
-        #     Gbase.add_edge(src, dst)
-    return links_name, links_bw, links_rtt, Gbase
+    #     for line in fd:
+    #         if (not line.startswith("Link_") and not line.startswith("edge_")):
+    #             continue
+    #         camps = line.split(" ")
+    #         name = str(camps[0])
+    #         src = int(camps[1])
+    #         dst = int(camps[2])
+    #         weight = int(camps[3])
+    #         bw = float(camps[4])
+    #         links_name[src][dst] = name
+    #         links_bw[src][dst] = bw
+    #         links_rtt[src][dst] = weight
+    #         Gbase.add_edge(src, dst)
+    # return links_name, links_bw, links_rtt, Gbase
 
 def process_leases(links_name, links_bw, links_rtt):
     "fiber information, including src, dst, name, rtt, min_bw and max_bw"
@@ -171,7 +171,7 @@ def get_traffic_matrix(traffic_file):
 
 def load_topo_info():
     network_name = 'Kdl'
-    graph_file_path = '/scratch/gpfs/ia3026/cos561/neuroplan/source/data/Kdl.graph'
+    graph_file_path = '/scratch/gpfs/ia3026/cos561/neuroplan/source/data/example_with_label_unique.gml'
 # def main():
     #graph_file_path = './source/data/' + str(network_name) + '/' + str(network_name) + '.graph'
     # graph_file_path = './source/data/NEW_Janetbackbone/ALL/Janetbackbone.graph'
