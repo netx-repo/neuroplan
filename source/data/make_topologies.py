@@ -30,7 +30,9 @@ def process_graph_from_topology(file_path, rtt_min, rtt_max, capacity_min, capac
     rtt_list = []
     capacity_min_list = []
     capacity_max_list = []
+    actual_capacity_list = []
     link_names_list = []
+    cos_list = []
     for i, edge in enumerate(Gbase.edges):
         source_list.append(edge[0])
         dest_list.append(edge[1])
@@ -38,6 +40,9 @@ def process_graph_from_topology(file_path, rtt_min, rtt_max, capacity_min, capac
         capacity_min_list.append(capacity_min)
         capacity_max_list.append(capacity_max)
         link_names_list.append("Link-{}".format(i))
+
+        cos_list.append('BRONZE') # not entirely sure wtf this is
+        actual_capacity_list.append(random.randint(capacity_min + 1, capacity_max))
 
     rtt_capacity_df = pd.DataFrame({
         'LinkName' : link_names_list,
@@ -47,10 +52,19 @@ def process_graph_from_topology(file_path, rtt_min, rtt_max, capacity_min, capac
         'CapacityMin' : capacity_min_list,
         'CapacityMax' : capacity_max_list,
     })
+
+    flows_df = pd.DataFrame({
+        'LinkName' : link_names_list,
+        'Source' : source_list,
+        'Destination' : dest_list,
+        'COS' : cos_list,
+        'ActualCapacity' : actual_capacity_list,
+    })
     
-    excel_path = 'mytopology.xlsx'
+    excel_path = 'KDL_topology.xlsx'
     with pd.ExcelWriter(excel_path) as writer:
         rtt_capacity_df.to_excel(writer, sheet_name='RTT-Capacity')
+        flows_df.to_excel(writer, sheet_name='Flows')
 
     # Gbase = nx.Graph()
     # with open(file_path) as fd:
