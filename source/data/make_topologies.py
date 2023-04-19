@@ -6,6 +6,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import math
 from random import sample
+import random
 
 node_to_index_dic = {}
 index_to_node_lst = []
@@ -20,11 +21,36 @@ def node_to_index(node):
 def demand_to_index(demand):
     return(demand_to_index_dic[demand])
 
-def process_graph(file_path):
+def process_graph_from_topology(file_path, rtt_min, rtt_max, capacity_min, capacity_max):
     # Gbase = nx.MultiDiGraph()
 
     Gbase = nx.read_gml(file_path)
-    print(Gbase)
+    source_list = []
+    dest_list = []
+    rtt_list = []
+    capacity_min_list = []
+    capacity_max_list = []
+    link_names_list = []
+    for i, edge in enumerate(Gbase.edges):
+        source_list.append(edge[0])
+        dest_list.append(edge[1])
+        rtt_list.append(random.randint(rtt_min, rtt_max))
+        capacity_min_list.append(capacity_min)
+        capacity_max_list.append(capacity_max)
+        link_names_list.append("Link-{}".format(i))
+
+    rtt_capacity_df = pd.DataFrame({
+        'LinkName' : link_names_list,
+        'Source' : source_list,
+        'Destination' : dest_list,
+        'RTT' : rtt_list,
+        'CapacityMin' : capacity_min_list,
+        'CapacityMax' : capacity_max_list,
+    })
+    
+    excel_path = 'mytopology.xlsx'
+    with pd.ExcelWriter(excel_path) as writer:
+        rtt_capacity_df.to_excel(writer, sheet_name='RTT-Capacity')
 
     # Gbase = nx.Graph()
     # with open(file_path) as fd:
@@ -220,6 +246,11 @@ def load_topo_info():
     # Flows_set = set()
 
 
-print(load_topo_info())
-# if __name__ == '__main__':
-#     main()
+# print(load_topo_info())
+if __name__ == '__main__':
+    file_path = 'example_with_label_unique.gml'
+    rtt_min = 2
+    rtt_max = 5
+    capacity_min = 0
+    capacity_max = 1000
+    process_graph_from_topology(file_path, rtt_min, rtt_max, capacity_min, capacity_max)
