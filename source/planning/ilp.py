@@ -32,7 +32,8 @@ class ILP(object):
 
             fiber_info[fiber_name] = (fiber_inst.lease_flag, max_capa, max_spectrum)
 
-        failed_links_for_spof_list = self.topo.failed_links_for_spof_list[:-1]
+        #failed_links_for_spof_list = self.topo.failed_links_for_spof_list[:-1]
+        failed_links_for_spof_list = []
         print("start ilp_solve_c...", flush=True)
         start_time = time.time()
         (cost_opt, delta_capa_sum, opt_sol) = gurobi_c.ilp_solve_c(non_direct_graph, failed_links_for_spof_list, \
@@ -59,7 +60,8 @@ class ILP(object):
 
             fiber_info[fiber_name] = (fiber_inst.lease_flag, max_capa, max_spectrum)
         
-        failed_links_for_spof_list = self.topo.failed_links_for_spof_list[:-1]
+        #failed_links_for_spof_list = self.topo.failed_links_for_spof_list[:-1]
+        failed_links_for_spof_list = []
 
         spof_group = failed_links_for_spof_list[:spof_group_size]
         group_idx = 0
