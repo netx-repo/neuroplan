@@ -10,12 +10,20 @@ The network topologies and the trained models used in the paper are not open-sou
 git clone https://github.com/iarmourgarb/neuroplan.git
 ```
 ### Step 1: Make conda environment
+'''
 conda create --name <env> python=3.7
 conda activate <env>
-wget wget https://packages.gurobi.com/9.0/gurobi9.0.2_linux64.tar.gz
+wget https://packages.gurobi.com/9.0/gurobi9.0.2_linux64.tar.gz
+tar xvfz gurobi9.0.2_linux64.tar.gz
+cd gurobi902/linux64/src/build/
+make
+cp libgurobi_c++.a ../../lib/
+'''
+
+Then you need to set your environment variables by changing the gurobi.sh file
+
 
 ### Step 2: Install gurobi and mpi4py in conda env
-conda install -c gurobi gurobi
 conda install -c conda-forge mpi4py
 
 
