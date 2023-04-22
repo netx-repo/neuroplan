@@ -19,6 +19,7 @@ Then you need to set your environment variables by changing the gurobi.sh file
 
 
 ### Step 2: Install gurobi and mpi4py in conda env
+```
 conda install -c conda-forge mpi4py
 
 wget https://packages.gurobi.com/9.0/gurobi9.0.2_linux64.tar.gz
@@ -26,6 +27,8 @@ tar xvfz gurobi9.0.2_linux64.tar.gz
 cd gurobi902/linux64/src/build/
 make
 cp libgurobi_c++.a ../../lib/
+```
+
 Make sure your Gurobi solver works: `gurobi_cl /opt/gurobi902/linux64/examples/data/coins.lp`
 
 Academic license:
