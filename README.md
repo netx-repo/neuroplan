@@ -14,6 +14,7 @@ git clone https://github.com/iarmourgarb/neuroplan.git
 conda create --name <env> python=3.7
 conda activate <env>
 conda install -c conda-forge mpi4py
+pip install protobuf==3.20.*
 ```
 
 Then you need to set your environment variables by changing the gurobi.sh file
