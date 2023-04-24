@@ -136,28 +136,28 @@ class Topology:
         print("# of l1 node:{}, # of fibers:{}".format(len(self.optic.nodes), len(self.optic.fibers)))
 
     def import_lease_from_file(self, file_path):
-        df = pd.read_excel(file_path, sheet_name="Leases")
+        df = pd.read_excel(file_path, sheet_name="RTT-Capacity")
 
         for index, row in df.iterrows():
-            self.optic.register_node(row['src'])
-            self.optic.register_node(row['dst'])
-            self.fiber_from_lease.add(row['name'])
-            self.optic.register_fiber(row['name'],self.optic.get_node_by_name(row['src']),self.optic.get_node_by_name(row['dst']),\
-                length=int(row['rtt']),lease_flag=True,min_bw=int(row['min_capacity_gbps']),max_bw=int(row['max_capacity_gbps']))
+            self.optic.register_node(row['Source'])
+            self.optic.register_node(row['Destination'])
+            self.fiber_from_lease.add(row['LinkName'])
+            self.optic.register_fiber(row['LinkName'],self.optic.get_node_by_name(row['Source']),self.optic.get_node_by_name(row['Destination']),\
+                length=int(row['RTT']),lease_flag=True,min_bw=int(row['CapacityMin']),max_bw=int(row['CapacityMax']))
 
-            src_name = min(row['src'], row['dst'])
-            dst_name = max(row['src'], row['dst'])
+            src_name = min(row['Source'], row['Destination'])
+            dst_name = max(row['Source'], row['Destination'])
             
             od_pair = (src_name, dst_name)
             try:
-                self.od_pair_map_lease_name[od_pair].append(row['name'])
+                self.od_pair_map_lease_name[od_pair].append(row['LinkName'])
             except:
-                self.od_pair_map_lease_name[od_pair] = [row['name']]
+                self.od_pair_map_lease_name[od_pair] = [row['LinkName']]
             
             try:
-                self.od_pair_map_optic_name[od_pair].append(row['name'])
+                self.od_pair_map_optic_name[od_pair].append(row['LinkName'])
             except:
-                self.od_pair_map_optic_name[od_pair] = [row['name']]
+                self.od_pair_map_optic_name[od_pair] = [row['LinkName']]
             
             self.optic_pair_name_set.add(od_pair)
 
@@ -359,20 +359,20 @@ class Topology:
 
             if simplified_tm > 0 and index > simplified_tm:
                 break
-            assert(row['src'] in self.ip.routers)
-            assert(row['dst'] in self.ip.routers)
-            assert((row['src'], row['dst'], row['cos']) not in flow_identifier)
+            assert(row['Source'] in self.ip.routers)
+            assert(row['Destination'] in self.ip.routers)
+            assert((row['Source'], row['Destination'], row['COS']) not in flow_identifier)
 
-            flow_identifier.add((row['src'], row['dst'], row['cos']))
-            adjust_flow_size = math.ceil(float(row['capacity_gbps']))
+            flow_identifier.add((row['Source'], row['Destination'], row['COS']))
+            adjust_flow_size = math.ceil(float(row['ActualCapacity']))
             
-            self.tm.register_flow(row['name'], self.ip.get_router_by_name(row['src']), self.ip.get_router_by_name(row['dst']), \
-                adjust_flow_size, row['cos'])
+            self.tm.register_flow(row['LinkName'], self.ip.get_router_by_name(row['Source']), self.ip.get_router_by_name(row['Destination']), \
+                adjust_flow_size, row['COS'])
             
-            od_pair = (min(row['src'], row['dst']), max(row['src'], row['dst']))
+            od_pair = (min(row['Source'], row['Destination']), max(row['Source'], row['Destination']))
             flow_od_pairs.add(od_pair)
-            self.tm_nodes.add(row['src'])
-            self.tm_nodes.add(row['dst'])
+            self.tm_nodes.add(row['Source'])
+            self.tm_nodes.add(row['Destination'])
             
         print("# of flows:{}".format(len(self.tm.flows)))
 
