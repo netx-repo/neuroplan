@@ -21,8 +21,10 @@ def node_to_index(node):
 def demand_to_index(demand):
     return(demand_to_index_dic[demand])
 
-def process_graph_from_topology(file_path, rtt_min, rtt_max, capacity_min, capacity_max):
+def process_graph_from_topology(file_path, excel_path, rtt_min, rtt_max, capacity_min, capacity_max, fp_max, spectrum_size):
     # Gbase = nx.MultiDiGraph()
+
+    # leases and fibers stuff
 
     Gbase = nx.read_gml(file_path)
     source_list = []
@@ -33,16 +35,23 @@ def process_graph_from_topology(file_path, rtt_min, rtt_max, capacity_min, capac
     actual_capacity_list = []
     link_names_list = []
     cos_list = []
+    
+    max_fp_list = []
+    spectrum_size_ghz_per_fp_list = []
+
     for i, edge in enumerate(Gbase.edges):
         source_list.append(edge[0])
         dest_list.append(edge[1])
         rtt_list.append(random.randint(rtt_min, rtt_max))
         capacity_min_list.append(capacity_min)
         capacity_max_list.append(capacity_max)
-        link_names_list.append("Link-{}".format(i))
+        link_names_list.append("Link_{}".format(i))
 
         cos_list.append('BRONZE') # not entirely sure wtf this is
         actual_capacity_list.append(random.randint(capacity_min + 1, capacity_max))
+
+        max_fp_list.append(fp_max)
+        spectrum_size_ghz_per_fp_list.append(spectrum_size)
 
     rtt_capacity_df = pd.DataFrame({
         'LinkName' : link_names_list,
@@ -60,11 +69,67 @@ def process_graph_from_topology(file_path, rtt_min, rtt_max, capacity_min, capac
         'COS' : cos_list,
         'ActualCapacity' : actual_capacity_list,
     })
+
+    fibers_df = pd.DataFrame({
+        'name' : link_names_list,
+        'src' : source_list, 
+        'dst' : dest_list,
+        'rtt' : rtt_list,
+        'max_fp' : max_fp_list,
+        'spectrum_size_ghz_per_fp' : spectrum_size_ghz_per_fp_list
+    })
     
-    excel_path = 'KDL_topology.xlsx'
+    # ip, l3 stuff
+    nodes = list(Gbase.nodes)
+    IPGraph = Gbase.copy()
+
+    ip_name_arr = nodes.copy()
+    ip_l1_node_arr = nodes.copy()
+    ip_stub_arr = ['FALSE'] * len(nodes)
+
+    ip_source_list = []
+    ip_dest_list = []
+    ip_capacity_min_list = []
+    ip_capacity_max_list = []
+    ip_actual_capacity_list = []
+    ip_link_names_list = []
+    ip_fiber_name_map_spectrum_list = []
+    igp_list = []
+
+    for i, edge in enumerate(IPGraph.edges):
+        ip_source_list.append(edge[0])
+        ip_dest_list.append(edge[1])
+        ip_capacity_min_list.append(capacity_min)
+        ip_capacity_max_list.append(capacity_max)
+        ip_link_names_list.append("ip_Link_{}".format(i))
+        ip_fiber_name_map_spectrum_list.append("Link_{}:5".format(i))
+        igp_list.append(0)
+        ip_actual_capacity_list.append(random.randint(capacity_min + 1, capacity_max)) 
+    
+    ip_capacity_df = pd.DataFrame({
+        'name' : ip_link_names_list,
+        'src' : ip_source_list,
+        'dst' : ip_dest_list,
+        'min_capacity_gbps' : ip_capacity_min_list,
+        'max_capacity_gbps' : ip_capacity_max_list,
+        'final_capacity_gpbs' : ip_actual_capacity_list,
+        'igp' : igp_list,
+        'fiber_name_map_spectrum' : ip_fiber_name_map_spectrum_list,
+    })
+
+    ip_names_df = pd.DataFrame({
+        'name' : ip_name_arr,
+        'l1_node' : ip_l1_node_arr,
+        'stub' : ip_stub_arr,
+    })
+
+    
     with pd.ExcelWriter(excel_path) as writer:
         rtt_capacity_df.to_excel(writer, sheet_name='RTT-Capacity')
+        fibers_df.to_excel(writer, sheet_name='Fibers')
         flows_df.to_excel(writer, sheet_name='Flows')
+        ip_names_df.to_excel(writer, sheet_name='L3Nodes')
+        ip_capacity_df.to_excel(writer, sheet_name='L3Links')
 
     # Gbase = nx.Graph()
     # with open(file_path) as fd:
@@ -262,9 +327,12 @@ def load_topo_info():
 
 # print(load_topo_info())
 if __name__ == '__main__':
-    file_path = 'example_with_label_unique.gml'
+    file_path = 'topologies/VisionNet_with_label_unique.gml'
+    excel_path = 'topologies/VisionNet_topology.xlsx'
     rtt_min = 2
     rtt_max = 5
     capacity_min = 0
     capacity_max = 1000
-    process_graph_from_topology(file_path, rtt_min, rtt_max, capacity_min, capacity_max)
+    fp_max = 50
+    spectrum_size = 10
+    process_graph_from_topology(file_path, excel_path, rtt_min, rtt_max, capacity_min, capacity_max, fp_max, spectrum_size)

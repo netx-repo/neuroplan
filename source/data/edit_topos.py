@@ -1,5 +1,8 @@
 # Open the input and output files
-with open("Kdl.graph", "r") as f_in, open("example_with_label_unique.gml", "w") as f_out:
+input_datapath = 'topologies/VisionNet.gml'
+output_datapath = 'topologies/VisionNet_with_label_unique.gml'
+
+with open(input_datapath, "r") as f_in, open(output_datapath, "w") as f_out:
     # Loop through the lines in the input file
 # Loop through the lines in the input file
     for line in f_in:
