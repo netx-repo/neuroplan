@@ -123,6 +123,10 @@ def process_graph_from_topology(file_path, excel_path, rtt_min, rtt_max, capacit
         'stub' : ip_stub_arr,
     })
 
+    spofs_df = pd.DataFrame({
+        'fiber_names' : [],
+        'cos_to_protect' : [],
+    })
     
     with pd.ExcelWriter(excel_path) as writer:
         rtt_capacity_df.to_excel(writer, sheet_name='RTT-Capacity')
@@ -130,6 +134,7 @@ def process_graph_from_topology(file_path, excel_path, rtt_min, rtt_max, capacit
         flows_df.to_excel(writer, sheet_name='Flows')
         ip_names_df.to_excel(writer, sheet_name='L3Nodes')
         ip_capacity_df.to_excel(writer, sheet_name='L3Links')
+        spofs_df.to_excel(writer, sheet_name='Spofs')
 
     # Gbase = nx.Graph()
     # with open(file_path) as fd:
@@ -327,8 +332,8 @@ def load_topo_info():
 
 # print(load_topo_info())
 if __name__ == '__main__':
-    file_path = 'topologies/VisionNet_with_label_unique.gml'
-    excel_path = 'topologies/VisionNet_topology.xlsx'
+    file_path = 'topologies/KDL_with_label_unique.gml'
+    excel_path = 'topologies/KDL_topology.xlsx'
     rtt_min = 2
     rtt_max = 5
     capacity_min = 0
