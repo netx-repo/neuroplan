@@ -317,7 +317,6 @@ def vpg(env_fn, device, enable_mpi=False, non_blocking=False, actor_critic=core.
             if non_blocking:
                 torch.cuda.synchronize()
             a, v, logp = ac.step(o_tensor, mask_tensor)
-            
             next_o, next_mask, r, d, info = env.step(a)
             ep_ret += r
             ep_len += 1

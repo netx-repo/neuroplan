@@ -60,7 +60,7 @@ class GCN(nn.Module):
                 self.gcn_list.append(SimpleGCN(n_hidden, feature_num))
             else:
                 self.gcn_list.append(SimpleGCN(n_hidden, n_hidden))
-        print("num of gcn layer:{}".format(len(self.gcn_list)))
+        # print("num of gcn layer:{}".format(len(self.gcn_list)))
         self.gcn_list = nn.ModuleList(self.gcn_list)
 
     # node_num: n
@@ -152,7 +152,7 @@ class GCNActorCritic(nn.Module):
         # build value function
         self.v = GCNCritic(feature_num, ip_node_num, self.GCN, hidden_sizes, activation)
         params_num = sum(functools.reduce( lambda a, b: a*b, x.size()) for x in self.parameters())
-        print("# of trainable params:{}".format(params_num))
+        # print("# of trainable params:{}".format(params_num))
 
     def step(self, obs, mask):
         with torch.no_grad():

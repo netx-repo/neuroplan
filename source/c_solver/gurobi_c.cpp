@@ -19,7 +19,9 @@ using namespace std::chrono;
 // source aggregation formulation (SF)
 std::tuple<bool, int> check_sf(py::object graph, py::list failures, py::dict traffic_mattrix, py::dict node_stub, py::float_ load_factor){
     // Create an environment
+    std::cout << "hello world\n";
     GRBEnv env = GRBEnv();
+    std::cout << "hello world\n";
 
     // Create an empty model
     GRBModel model = GRBModel(env);

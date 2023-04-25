@@ -202,8 +202,8 @@ class Topology:
                 assert(k in self.optic.fibers)
 
                 # check the solution
-                assert(int(row['final_capacity_gbps'])<=int(row['max_capacity_gbps']))
-                assert(int(row['final_capacity_gbps'])>=init_capa)
+                assert(int(row['final_capacity_gpbs'])<=int(row['max_capacity_gbps']))
+                assert(int(row['final_capacity_gpbs'])>=init_capa)
 
                 fiber_map_spectrum[k] = float(v)
 
@@ -295,8 +295,10 @@ class Topology:
         complete_graph = self.ip.generate_graph_from_multi_edge([])
 
         (sat_flag0, opt_cnt0) = gurobi_c.check_sf(complete_graph, delta_bw_matrix_list[:-1], self.tm.data['no-bronze'], self.l3node_map_stub, self.load_factor)
+        # (sat_flag0, opt_cnt0) = (True,1)
         start_time = time.time()
         (sat_flag1, opt_cnt1) = gurobi_c.check_sf(complete_graph, delta_bw_matrix_list[-1:], self.tm.data['all'], self.l3node_map_stub, self.load_factor)
+        # (sat_flag1, opt_cnt1) = (True,1)
         print("check init states steady state num:{}, time:{}".format(opt_cnt1, time.time()-start_time))
         if sat_flag0 and sat_flag1:
             sat_flag = True
@@ -336,9 +338,11 @@ class Topology:
         complete_graph = self.ip.generate_graph_from_multi_edge([])
         start_time = time.time()
         (sat_flag0, opt_cnt0) = gurobi_c.check_sf(complete_graph, delta_bw_matrix_list[:-1], self.tm.data['no-bronze'],self.l3node_map_stub, self.load_factor)
+        # (sat_flag0, opt_cnt0) = (True,1)
         print("check sol spofs num:{}, time:{}".format(opt_cnt0, time.time()-start_time))
         start_time = time.time()
         (sat_flag1, opt_cnt1) = gurobi_c.check_sf(complete_graph, delta_bw_matrix_list[-1:], self.tm.data['all'],self.l3node_map_stub, self.load_factor)
+        # (sat_flag1, opt_cnt1) = (True,1)
         print("check sol steady state num:{}, time:{}".format(opt_cnt1, time.time()-start_time))
         if sat_flag0 and sat_flag1:
             sat_flag = True
@@ -372,7 +376,7 @@ class Topology:
             od_pair = (min(row['Source'], row['Destination']), max(row['Source'], row['Destination']))
             flow_od_pairs.add(od_pair)
             self.tm_nodes.add(row['Source'])
-            self.tm_nodes.add(row['Destination'])
+            self.tm_nodes.add(row['Source'])
             
         print("# of flows:{}".format(len(self.tm.flows)))
 
@@ -475,10 +479,18 @@ class Topology:
                 # flow formulation
                 (sat_flag, opt_cnt) = gurobi_c.check(complete_graph, self.delta_bw_matrix_list[self.spof_failed_point:-1], \
                     self.tm.data['no-bronze'],self.l3node_map_stub, self.load_factor)
+                # (sat_flag, opt_cnt) = (True,1)
             else:
                 # source aggregation
+                # print(complete_graph)
+                # print(self.delta_bw_matrix_list[self.spof_failed_point:-1])
+                # print(self.tm.data['no-bronze'])
+                # print(self.l3node_map_stub)
+                # print(self.load_factor)
+                
                 (sat_flag, opt_cnt) = gurobi_c.check_sf(complete_graph, self.delta_bw_matrix_list[self.spof_failed_point:-1], \
-                    self.tm.data['no-bronze'],self.l3node_map_stub, self.load_factor)
+                   self.tm.data['no-bronze'],self.l3node_map_stub, self.load_factor)
+                #(sat_flag, opt_cnt) = (True, 1)
             self.spof_failed_point += (opt_cnt-1)
             cache_hit_flag = False
             if len(state_map_failed_point_cache) < cache_max:
@@ -492,10 +504,12 @@ class Topology:
             # flow formulation
             (sat_flag, opt_cnt) = gurobi_c.check(complete_graph, self.delta_bw_matrix_list[-1:], self.tm.data['all'], \
                 self.l3node_map_stub, self.load_factor)
+            # (sat_flag, opt_cnt) = (True,1)
         else:
             # source aggregation
             (sat_flag, opt_cnt) = gurobi_c.check_sf(complete_graph, self.delta_bw_matrix_list[-1:], self.tm.data['all'], \
-                self.l3node_map_stub, self.load_factor)
+               self.l3node_map_stub, self.load_factor)
+            # (sat_flag, opt_cnt) = (True, 1)
         return sat_flag, cache_hit_flag, state_map_failed_point_cache
     
     # to satisfy the maximal spectrum and capacity constraints of fibers, set mask.

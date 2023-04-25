@@ -42,13 +42,13 @@ class RL(object):
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         ac = GCNActorCritic
 
-        print("PRINTING INPUTS: \n")
-        print(self.max_action)
+        # print("PRINTING INPUTS: \n")
+        # print(self.max_action)
         print(self.epoch_num)
-        print(self.steps_per_epoch)
-        print(logger_kwargs)
-        print(ac)
-        print(self.get_env)
+        # print(self.steps_per_epoch)
+        # print(logger_kwargs)
+        # print(ac)
+        # print(self.get_env)
         vpg_pytorch(self.get_env, enable_mpi=False, non_blocking=False, gamma=1,actor_critic=ac,\
             max_ep_len=self.max_action, seed=8, device=device, \
             model_path=self.model_path, \

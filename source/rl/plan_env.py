@@ -33,10 +33,10 @@ class PlanEnv(gym.Env):
         obs, _ = self.get_observation()
 
         self.observation_space = gym.Space(shape=list(obs.shape))
-        print("obv_space size: {}".format(self.observation_space.shape))
+        # print("obv_space size: {}".format(self.observation_space.shape))
 
         self.action_space = gym.spaces.Discrete(len(self.topo.ip.links)*max_n_delta_bw)
-        print("act_space size: {}".format(self.action_space.n))
+        # print("act_space size: {}".format(self.action_space.n))
         
         self.cum_rwd = 0
         self.complete_cnt = 0
@@ -107,6 +107,11 @@ class PlanEnv(gym.Env):
         
         if cost >= 0:
             # check the spof constraints further
+            # print(l3_link_idx)
+            # print(delta_bw_act)
+            # print(self.state_map_fp_cache)
+            # print(self.cache_max_entry)
+            # print(self.checker_mode)
             sat_flag, cache_hit_flag, self.state_map_fp_cache = self.topo.check_spof(l3_link_idx, delta_bw_act, self.state_map_fp_cache, self.cache_max_entry, self.checker_mode)
             reward = -round(cost*self.norm_param, 10)
             self.cost += cost
