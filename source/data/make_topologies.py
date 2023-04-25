@@ -354,8 +354,8 @@ def load_topo_info():
 
 # print(load_topo_info())
 if __name__ == '__main__':
-    file_path = 'topologies/Globalcenter_with_label_unique.gml'
-    excel_path = 'topologies/Globalcenter_topology.xlsx'
+    file_path = 'topologies/Cogentco_with_label_unique.gml'
+    excel_path = 'topologies/Cogentco_topology.xlsx'
     rtt_min = 2
     rtt_max = 5
     capacity_min = 0
